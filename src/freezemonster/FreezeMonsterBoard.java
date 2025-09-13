@@ -23,8 +23,12 @@ public class FreezeMonsterBoard extends AbstractBoard {
     private Shot shot;
 
     private int direction = -1;
-    private int direc = 0;
+    // private int direc = 0; // <-- DELETED. This is no longer needed; the shot handles its own direction.
     private int deaths = 0;
+
+    // ADDED: Fields to cache the player's last movement direction.
+    private int lastPlayerDx = 0;
+    private int lastPlayerDy = -2; // Default to firing "up" if player hasn't moved yet
 
 
     public FreezeMonsterBoard(String image) {
@@ -84,8 +88,9 @@ public class FreezeMonsterBoard extends AbstractBoard {
             if (inGame) {
 
                 if (!shot.isVisible()) {
-
-                    shot = new Shot(x, y);
+                    // MODIFIED: Pass the cached direction to the new Shot constructor.
+                    // This fixes Requirement 3 bug.
+                    shot = new Shot(x, y, lastPlayerDx, lastPlayerDy);
                 }
             }
         }
@@ -95,6 +100,10 @@ public class FreezeMonsterBoard extends AbstractBoard {
      * UPDATE METHOD - REFACTORED
      * All monster movement logic has been removed from this method and
      * delegated to the injected Strategy objects.
+     *
+     * REFACTORED (Shot Logic):
+     * All shot movement logic has been delegated to the Shot sprite itself (SRP fix).
+     * The board is now only responsible for collision detection and boundary checks.
      */
     protected void update() {
         if (deaths == Commons.NUMBER_OF_MONSTERS_TO_DESTROY) {
@@ -104,64 +113,74 @@ public class FreezeMonsterBoard extends AbstractBoard {
         }
 
         // This call now executes the injected PlayerBilateralStrategy
-        for (Player player : players)
+        for (Player player : players) {
             player.act();
 
-        // Player Shot logic (unchanged)
+            // ADDED: Cache the last non-zero direction the player moved.
+            // This ensures the shot fires correctly even if the player stops before firing.
+            if (player.getDx() != 0 || player.getDy() != 0) {
+                lastPlayerDx = player.getDx();
+                lastPlayerDy = player.getDy();
+            }
+        }
+
+
+        // --- Player Shot logic (COMPLETELY REFACTORED) ---
         if (shot.isVisible()) {
 
+            // 1. Tell the shot to move itself (SRP fixed)
+            shot.act();
+
+            // 2. Check boundaries (Board's responsibility)
             int shotX = shot.getX();
             int shotY = shot.getY();
 
+            if (shotY < 0 || shotY >= Commons.BOARD_HEIGHT || shotX < 0 || shotX >= Commons.BOARD_WIDTH) {
+                shot.die();
+            }
+
+            // 3. Check collisions against monsters AND goop (Board's responsibility)
             for (BadSprite monster : badSprites) {
 
+                // 3a. Check collision against the Monster
                 int monsterX = monster.getX();
                 int monsterY = monster.getY();
 
                 if (!monster.isDyingVisible() && shot.isVisible()) {
-                    if (shotX >= (monsterX) && shotX <= (monsterX + Commons.MONSTER_WIDTH) && shotY >= (monsterY) && shotY <= (monsterY + Commons.MONSTER_HEIGHT)) {
+                    if (shotX >= (monsterX) && shotX <= (monsterX + Commons.MONSTER_WIDTH)
+                            && shotY >= (monsterY) && shotY <= (monsterY + Commons.MONSTER_HEIGHT)) {
 
                         ImageIcon ii = new ImageIcon("images/monster" + monster.getMonsterImageIndice() + "bg.png");
                         monster.setImage(ii.getImage().getScaledInstance(Commons.MONSTER_WIDTH, Commons.MONSTER_HEIGHT, Image.SCALE_DEFAULT));
                         monster.setDyingVisible(true);
                         monster.setDying(true);
                         deaths++;
-                        shot.die();
+                        shot.die(); // Shot dies when it hits a monster
+                    }
+                }
+
+                // 3b. BUG FIX (Requirement 4): Check collision against this monster's Goop
+                // This logic was previously missing.
+                Goop goop = ((MonsterSprite) monster).getGoop();
+                // Check shot.isVisible() AGAIN, as it might have died on the monster in the check above
+                if (!goop.isDestroyed() && shot.isVisible()) {
+                    int goopX = goop.getX();
+                    int goopY = goop.getY();
+
+                    if (shotX >= (goopX) && shotX <= (goopX + Commons.GOOP_WIDTH) &&
+                            shotY >= (goopY) && shotY <= (goopY + Commons.GOOP_HEIGHT)) {
+
+                        shot.die(); // Shot dies
+                        goop.setDestroyed(true); // Goop also dies
                     }
                 }
             }
-
-            int position_y = shot.getY();
-            int position_x = shot.getX();
-
-            if ((players.get(0).getDy() == -2 && players.get(0).getDx() == 0 && direc == 0) || direc == 1) {
-                position_y -= 4;
-                direc = 1;
-            }
-            if ((players.get(0).getDy() == 2 && players.get(0).getDx() == 0 && direc == 0) || direc == 2) {
-                position_y += 4;
-                direc = 2;
-            }
-            if ((players.get(0).getDy() == 0 && players.get(0).getDx() == 2 && direc == 0) || direc == 3) {
-                position_x += 4;
-                direc = 3;
-            }
-            if ((players.get(0).getDy() == 0 && players.get(0).getDx() == -2 && direc == 0) || direc == 4) {
-                position_x -= 4;
-                direc = 4;
-            }
-
-            if (position_y < 0 || position_y >= Commons.BOARD_HEIGHT || position_x < 0 || position_x >= Commons.BOARD_WIDTH) {
-                shot.die();
-                direc = 0;
-            } else {
-                shot.setY(position_y);
-                shot.setX(position_x);
-            }
         }
+        // --- End of refactored shot block ---
+
 
         for (BadSprite monster : badSprites) {
-            monster.act();
+            monster.act(); // This executes the injected Random8WayMovementStrategy
         }
         // Goop logic is still handled here (potential next refactor!)
         updateOtherSprites();
@@ -218,6 +237,8 @@ public class FreezeMonsterBoard extends AbstractBoard {
 
             if (!goop.isDestroyed()) {
 
+                // This 8-way movement logic is duplicated (DRY violation)
+                // and should be refactored into a Strategy.
                 if (goop.isDirection() == 1) {
                     goop.setY(goop.getY() - 1);
                     goop.setX(goop.getX() - 1);
