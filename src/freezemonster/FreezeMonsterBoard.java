@@ -46,7 +46,7 @@ public class FreezeMonsterBoard extends AbstractBoard {
      * This method now injects the random movement strategy into each monster created.
      */
     protected void createBadSprites() {
-        for (int i = 0; i <= Commons.NUMBER_OF_MONSTERS_TO_DESTROY; i++) {
+        for (int i = 0; i < Commons.NUMBER_OF_MONSTERS_TO_DESTROY; i++) {
 
             MonsterSprite monster = new MonsterSprite(Commons.MONSTER_INIT_X + 18 * (int) (Math.random() * 10),
                     Commons.MONSTER_INIT_Y + 18 * (int) (Math.random() * 10), i);
@@ -298,26 +298,7 @@ public class FreezeMonsterBoard extends AbstractBoard {
     }
 
     @Override
-    protected void drawBadSprites(Graphics g) {
-
-        for (BadSprite bad : badSprites) {
-
-            if (bad.isVisible()) {
-                g.drawImage(bad.getImage(), bad.getX(), bad.getY(), this);
-            }
-
-            // THIS IS THE FIX:
-            // The original method in AbstractBoard calls bad.die() if bad.isDying() is true.
-            // For FreezeMonster, "dying" means "frozen," so we must NOT call bad.die().
-            // We intentionally leave that logic out of this overridden method.
-
-            if (bad.getBadnesses() != null) {
-                for (BadSprite badness : bad.getBadnesses()) {
-                    if (!badness.isDestroyed()) {
-                        g.drawImage(badness.getImage(), badness.getX(), badness.getY(), this);
-                    }
-                }
-            }
-        }
+    protected void handleDyingSprite(BadSprite bad) {
+        // Intentionally left empty. Do not call bad.die() when isDying() is true.
     }
 }

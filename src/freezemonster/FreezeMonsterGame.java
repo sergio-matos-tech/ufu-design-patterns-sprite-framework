@@ -13,7 +13,7 @@ public class FreezeMonsterGame extends MainFrame {
 	}
 	
 	protected  AbstractBoard createBoard() {
-		return new FreezeMonsterBoard("images/woody.png");
+		return new FreezeMonsterBoard("images/goku.png");
 	}
 
 	public static void main(String[] args) {

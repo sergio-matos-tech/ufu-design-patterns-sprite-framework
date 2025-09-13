@@ -89,9 +89,7 @@ public abstract class AbstractBoard extends JPanel {
                 g.drawImage(bad.getImage(), bad.getX(), bad.getY(), this);
             }
 
-            if (bad.isDying()) {
-                bad.die();
-            }
+            handleDyingSprite(bad);
 
             if (bad.getBadnesses()!= null) {
                 for (BadSprite badness: bad.getBadnesses()) {
@@ -211,6 +209,12 @@ public abstract class AbstractBoard extends JPanel {
 
                 processOtherSprites(player, e); // hotspot
             }
+        }
+    }
+
+    protected void handleDyingSprite(BadSprite bad) {
+        if (bad.isDying()) {
+            bad.die();
         }
     }
 }

@@ -11,33 +11,6 @@ public class PlayerBilateral extends Player{
     }
 
     @Override
-    public void act() {
-
-        x += dx;
-        y += dy;
-
-        if (x <= 2) {
-
-            x = 2;
-        }
-
-        if (x >= Commons.BOARD_WIDTH - 2 * width) {
-
-            x = Commons.BOARD_WIDTH - 2 * width;
-        }
-
-
-        if (y >= Commons.BOARD_HEIGHT - 2 * weight) {
-            y = Commons.BOARD_HEIGHT - 2 * weight;
-        }
-
-        if (y <= 2) {
-
-            y = 2;
-        }
-    }
-
-    @Override
     public void keyPressed(KeyEvent e) {
 
         int key = e.getKeyCode();

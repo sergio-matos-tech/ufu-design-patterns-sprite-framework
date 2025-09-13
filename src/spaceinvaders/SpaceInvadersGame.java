@@ -13,7 +13,7 @@ public class SpaceInvadersGame extends MainFrame {
 	}
 	
 	protected  AbstractBoard createBoard() {
-		return new SpaceInvadersBoard("images/player.png");
+		return new SpaceInvadersBoard("images/spaceship.png");
 	}
 
 
