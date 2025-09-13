@@ -1,86 +1,121 @@
-UFU Design Patterns Sprite Framework
+# Evolving a Java Game Framework with Design Patterns
 
-This project is an academic work developed for the "Princípios e Padrões de Projeto" (Design Principles and Patterns) discipline at the Faculty of Computing (FACOM) of the Federal University of Uberlândia (UFU).
-Project Overview
+This project is an academic work developed for the **"Princípios e Padrões de Projeto" (Design Principles and Patterns)** discipline at the Faculty of Computing (FACOM) of the Federal University of Uberlândia (UFU).
 
-The primary objective of this project is to refactor and evolve a simple Java-based arcade game framework. The original framework was tightly coupled to a single game, Space Invaders. The goal is to apply SOLID principles and key design patterns to create a more flexible, extensible, and maintainable architecture that can support multiple, distinct games.
+The primary objective was to **refactor and evolve a simple Java-based arcade game framework** that was originally tightly coupled to a single game, *Space Invaders*. By applying **SOLID principles** and **core design patterns**, the architecture was transformed into a flexible, extensible, and maintainable framework capable of supporting multiple, distinct games.
 
-The refactored framework now supports two games:
+The success of this evolution is demonstrated by the implementation of two fully functional games on the same framework: the original *Space Invaders* and the new *Freeze Monster*.
 
-    Space Invaders (Legacy): The original game, which must remain functional after the architectural changes.
+---
 
-    Freeze Monster (New): A new game with different mechanics, implemented on top of the evolved framework.
+## 🎮 Games Implemented
 
-This evolution demonstrates the practical application of the Strategy, Template Method, and Factory Method design patterns to solve common software design problems.
-Games Implemented
-1. Freeze Monster
+### 1. Freeze Monster
 
-A new game where the player must freeze all monsters on the screen while dodging projectiles.
+A new game developed on the evolved framework where the player must freeze all monsters on the screen while dodging their projectiles.
 
-Game Rules:
+**Game Rules:**
 
-    The player (Woody) can move in all 8 directions using the arrow keys.
+* **Player Movement:** The player (Woody) can move in all 8 directions using the arrow keys.
+* **Player Attack:** The player fires a freezing ray with the SPACE bar, which travels in a straight line based on the player's last direction of movement.
+* **Enemies:** Monsters move randomly around the screen and fire goop projectiles in straight lines.
+* **Win/Loss Condition:** The game ends when all monsters are frozen (**win**) or when the player is hit by a monster or a goop projectile (**lose**).
 
-    The player fires a freezing ray with the SPACE bar, which travels in the player's last direction of movement.
+### 2. Space Invaders (Legacy)
 
-    Monsters move randomly and fire goop projectiles in straight lines.
+The classic arcade game that served as the base for the original framework, which remains fully functional after the architectural refactoring.
 
-    The game ends when all monsters are frozen (win) or when the player is hit by a monster or goop (lose).
+**Game Rules:**
 
-2. Space Invaders
+* **Player Movement:** The player's ship moves horizontally at the bottom of the screen.
+* **Enemy Movement:** Aliens move as a monolithic block, descending each time they reach the screen's edge.
+* **Enemy Attack:** Aliens drop bombs randomly.
+* **Win/Loss Condition:** The game ends when all aliens are destroyed (**win**), the player is hit, or the aliens reach the bottom of the screen (**lose**).
 
-The classic arcade game that served as the base for the original framework.
+---
 
-Game Rules:
+## 🖼️ Game Previews
+### Space Invaders:
 
-    The player ship moves horizontally.
+<img width="498" height="504" alt="image" src="https://github.com/user-attachments/assets/09f4da78-eb02-4d0f-ae13-ce3eee7e4b3c" /> <br>
+### Freeze Monsters:
+<img width="498" height="504" alt="image" src="https://github.com/user-attachments/assets/683c28d5-de80-433d-9378-058cd7eadb83" />
 
-    Aliens move as a block, descending each time they reach the screen's edge.
 
-    Aliens drop bombs randomly.
+---
 
-    The game ends when all aliens are destroyed (win) or the aliens reach the bottom (lose).
+## ⚙️ How to Run the Project
 
-How to Run
-Prerequisites
+### Prerequisites
 
-    Java Development Kit (JDK) 1.8 or higher.
+* Java Development Kit (**JDK 8** or higher)
 
-Compilation & Execution
+### Compilation & Execution
 
-    Clone the repository:
+The project can be compiled and run from the command line in any Linux-based environment.
 
-    git clone <your-repository-url>
-    cd ufu-design-patterns-sprite-framework
+```bash
+# Clone the repository
+git clone <your-repository-url>
+cd <repository-directory>
 
-    Compile the source code from the root directory:
+# Compile all Java source files
+javac -d out $(find src -name "*.java")
 
-    javac -d out $(find src -name "*.java")
+# Run Freeze Monster
+java -cp out freezemonster.FreezeMonsterGame
 
-    (Note: This command is for Linux/macOS. For Windows, you may need an alternative to find)
+# Run Space Invaders
+java -cp out spaceinvaders.SpaceInvadersGame
+```
 
-    Run a game:
+---
 
-        To run Freeze Monster:
+## 🏗️ Architectural Analysis & Design Patterns
 
-        java -cp out freezemonster.FreezeMonsterGame
+The core of this project was the **practical application of design patterns** to decouple components and promote extensibility.
 
-        To run Space Invaders:
+### 1. Template Method Pattern
 
-        java -cp out spaceinvaders.SpaceInvadersGame
+* **Abstract Class:** `spriteframework.AbstractBoard`
+* **Template Methods:** `doGameCycle()` and `doDrawing()` define the invariant sequence of the game's logic (update, repaint) and rendering steps.
+* **Hotspots (Abstract Operations):** Concrete boards (`FreezeMonsterBoard`, `SpaceInvadersBoard`) override methods like `update()`, `createBadSprites()`, and `drawOtherSprites()` to implement specific rules.
 
-Architectural Analysis & Design Patterns
+### 2. Factory Method Pattern
 
-The core of this project involved applying the following patterns and principles:
+* **Factory Method:** `createPlayer(String image)` defined in `AbstractBoard`.
+* **Concrete Creators:** `FreezeMonsterBoard` and `SpaceInvadersBoard` override this method to return their specific player types (`PlayerBilateral` or `PlayerUnilateral`).
 
-    Template Method Pattern: The spriteframework.AbstractBoard class defines the main game loop (doGameCycle) and drawing process (doDrawing) as a template. Concrete game boards like FreezeMonsterBoard and SpaceInvadersBoard override specific steps (update, drawBadSprites, etc.) to implement their unique logic without altering the core algorithm structure.
+### 3. Strategy Pattern
 
-    Strategy Pattern: The movement logic for game sprites is encapsulated in separate IMovementStrategy classes. This decouples the sprites from their movement behavior, allowing different strategies (e.g., PlayerBilateralStrategy, Random8WayMovementStrategy) to be injected at runtime. This was crucial for supporting the different movement rules of both games.
+The most critical pattern used in the refactor, responsible for **decoupling sprites from movement behaviors**.
 
-    Factory Method Pattern: The AbstractBoard uses a createPlayer method, allowing subclasses to decide the concrete type of Player sprite to instantiate, thereby promoting loose coupling.
+* **Strategy Interface:** `IMovementStrategy` defines `move(Sprite sprite)`.
+* **Concrete Strategies:**
 
-    SOLID Principles: The refactoring effort focused on addressing violations of the Single Responsibility Principle (by breaking up monolithic "Board" classes) and the Liskov Substitution Principle (by ensuring sprite state models were consistent and extensible).
+  * `PlayerUnilateralStrategy`: Horizontal-only movement (Space Invaders ship)
+  * `PlayerBilateralStrategy`: 8-way movement (Freeze Monster player)
+  * `Random8WayMovementStrategy`: Random roaming (monsters)
+  * `StraightLine8WayStrategy`: Straight-line trajectory (Goop projectiles)
+* **Context:** `Sprite` holds a reference to an `IMovementStrategy`. The `performMove()` method delegates to the strategy. Strategies are injected at runtime.
 
-Credits
+---
 
-The original Space Invaders source code is based on the tutorial by Jan Bodnar at zetcode.com.
+## ✅ SOLID Principles Applied
+
+* **Single Responsibility Principle (SRP):**
+
+  * Original boards acted as "God Classes".
+  * Refactor delegated movement logic to **sprites** and **strategy objects**.
+
+* **Liskov Substitution Principle (LSP):**
+
+  * Fixed a violation in `BadSprite.getBadnesses()` (now returns an empty `LinkedList` instead of `null`).
+  * This ensured client code could handle base and subtype objects uniformly.
+
+---
+
+## 🙌 Credits
+
+* The original *Space Invaders* source code is based on the tutorial by **Jan Bodnar** at [zetcode.com](https://zetcode.com).
+* This project was developed as academic work for the **Design Principles and Patterns discipline** at FACOM, UFU.
