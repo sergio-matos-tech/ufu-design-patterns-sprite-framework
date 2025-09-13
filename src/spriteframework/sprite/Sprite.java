@@ -1,5 +1,7 @@
 package spriteframework.sprite;
 
+import spriteframework.strategy.IMovementStrategy;
+
 import java.awt.*;
 
 public class Sprite {
@@ -16,10 +18,21 @@ public class Sprite {
     protected int dx;
     protected int dy;
     protected int monsterDirection = 0;
+    protected IMovementStrategy movementStrategy;
 
     public Sprite() {
 
         visible = true;
+    }
+
+    public void setMovementStrategy(IMovementStrategy movementStrategy) {
+        this.movementStrategy = movementStrategy;
+    }
+
+    public void performMove() {
+        if (movementStrategy != null) {
+            movementStrategy.move(this);
+        }
     }
 
     public void die() {
@@ -66,6 +79,8 @@ public class Sprite {
 
         return x;
     }
+
+
 
     public void setDyingVisible(boolean dying) {
 

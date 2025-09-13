@@ -25,7 +25,7 @@ public class Player extends Sprite {
     }
 
     public void act() {
-
+        performMove();
     }
 
     public void keyPressed(KeyEvent e) {

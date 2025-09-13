@@ -10,7 +10,7 @@ public abstract class BadSprite extends Sprite {
 		return false;
 	}
 	public void act () {
-		//
+		performMove();
 	}
 
 	public abstract int getMonsterImageIndice();

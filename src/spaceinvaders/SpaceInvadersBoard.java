@@ -15,6 +15,7 @@ import spriteframework.sprite.PlayerUnilateral;
 import spriteframework.sprite.Player;
 
 import spaceinvaders.sprite.*;
+import spriteframework.strategy.PlayerUnilateralStrategy;
 
 public class SpaceInvadersBoard extends AbstractBoard{  
     //define sprites
@@ -136,10 +137,7 @@ public class SpaceInvadersBoard extends AbstractBoard{
 
                 direction = -1;
 
-                Iterator<BadSprite> i1 = badSprites.iterator();
-
-                while (i1.hasNext()) {
-                    BadSprite a2 = i1.next();
+                for (BadSprite a2 : badSprites) {
                     a2.setY(a2.getY() + Commons.GO_DOWN);
                 }
             }
@@ -223,7 +221,10 @@ public class SpaceInvadersBoard extends AbstractBoard{
 
     @Override
     protected Player createPlayer(String player) {
-        return new PlayerUnilateral(player);
+        Player p = new PlayerUnilateral(player);
+        p.setMovementStrategy(new PlayerUnilateralStrategy());
+        return p;
     }
+
 }
 
