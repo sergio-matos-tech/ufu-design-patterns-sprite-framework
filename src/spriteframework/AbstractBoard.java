@@ -91,11 +91,9 @@ public abstract class AbstractBoard extends JPanel {
 
             handleDyingSprite(bad);
 
-            if (bad.getBadnesses()!= null) {
-                for (BadSprite badness: bad.getBadnesses()) {
-                    if (!badness.isDestroyed()) {
-                        g.drawImage(badness.getImage(), badness.getX(), badness.getY(), this);
-                    }
+            for (BadSprite badness: bad.getBadnesses()) {
+                if (!badness.isDestroyed()) {
+                    g.drawImage(badness.getImage(), badness.getX(), badness.getY(), this);
                 }
             }
         }
