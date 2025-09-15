@@ -9,7 +9,6 @@ import java.awt.*;
 
 public class Shot extends BadSprite {
 
-    // ADDED: Fields to store the shot's autonomous movement vector
     private int shotDx;
     private int shotDy;
 
@@ -17,13 +16,10 @@ public class Shot extends BadSprite {
         setVisible(false);
     }
 
-    // ADDED: New constructor to capture the player's direction AT THE MOMENT OF FIRING
     public Shot(int x, int y, int playerDx, int playerDy) {
 
         initShot(x, y);
 
-        // Set shot speed (e.g., 2x player speed) and lock its direction.
-        // This fixes Requirement 3, as the direction is now set only once upon creation.
         this.shotDx = playerDx * 2;
         this.shotDy = playerDy * 2;
     }
@@ -41,9 +37,6 @@ public class Shot extends BadSprite {
         setY(y - V_SPACE);
     }
 
-    // ADDED: The act() method override.
-    // This allows the board to polymorphically update the shot just like any other sprite,
-    // and the shot itself handles its own movement logic (Fixes SRP).
     @Override
     public void act() {
         this.x += shotDx;

@@ -15,16 +15,11 @@ public class PlayerUnilateral extends Player{
 
         int key = e.getKeyCode();
 
-        if (key == KeyEvent.VK_LEFT) {
-
+        if (key == KeyEvent.VK_LEFT)
             dx = -2;
-        }
 
-        if (key == KeyEvent.VK_RIGHT) {
-
+        if (key == KeyEvent.VK_RIGHT)
             dx = 2;
-        }
-
     }
 
     @Override
@@ -32,15 +27,11 @@ public class PlayerUnilateral extends Player{
 
         int key = e.getKeyCode();
 
-        if (key == KeyEvent.VK_LEFT) {
-
+        if (key == KeyEvent.VK_LEFT)
             dx = 0;
-        }
 
-        if (key == KeyEvent.VK_RIGHT) {
-
+        if (key == KeyEvent.VK_RIGHT)
             dx = 0;
-        }
 
     }
 }

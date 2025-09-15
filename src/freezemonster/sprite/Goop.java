@@ -1,6 +1,8 @@
 package freezemonster.sprite;
 
 import freezemonster.Commons;
+// Import the new strategy
+import freezemonster.strategy.StraightLineMovementStrategy;
 import spriteframework.sprite.BadSprite;
 
 import javax.swing.*;
@@ -9,10 +11,8 @@ import java.awt.*;
 public class Goop extends BadSprite {
 
     private boolean destroyed;
-    private int direction = 0;
 
     public Goop(int x, int y) {
-
         initGoop(x, y);
     }
 
@@ -22,6 +22,8 @@ public class Goop extends BadSprite {
 
         this.x = x;
         this.y = y;
+
+        setMovementStrategy(new StraightLineMovementStrategy());
 
         String goopImage = "images/goop.png";
         ImageIcon ii = new ImageIcon(goopImage);
@@ -41,12 +43,11 @@ public class Goop extends BadSprite {
         return 0;
     }
 
-    public int isDirection() {
-        return direction;
+    public int getDirection() {
+        return this.monsterDirection;
     }
 
     public void setDirection(int direction) {
-        this.direction = direction;
+        this.setMonsterDirection(direction);
     }
-
 }
