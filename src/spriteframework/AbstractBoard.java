@@ -28,6 +28,10 @@ public abstract class AbstractBoard extends JPanel {
 
     protected String image = null;
 
+    // --- PONTOS DE EXTENSÃO (HOTSPOTS) PARA O TEMPLATE METHOD ---
+    // Métodos abstratos que as subclasses (FreezeMonsterBoard, SpaceInvadersBoard)
+    // devem implementar para definir o comportamento específico do jogo.
+
     protected abstract void createBadSprites();
     protected abstract void createOtherSprites();
     protected abstract void drawOtherSprites(Graphics g);
@@ -54,6 +58,8 @@ public abstract class AbstractBoard extends JPanel {
         d = new Dimension(Commons.BOARD_WIDTH, Commons.BOARD_HEIGHT);
         setBackground(Color.black);
 
+        // O Timer dispara um evento a cada Commons.DELAY milissegundos,
+        // chamando o método actionPerformed da classe GameCycle.
         timer = new Timer(Commons.DELAY, new GameCycle());
         timer.start();
 
@@ -70,6 +76,9 @@ public abstract class AbstractBoard extends JPanel {
         players.add(createPlayer(image));
     }
 
+    // --- FACTORY METHOD ---
+    // Este método é um Factory Method que permite que as subclasses
+    // decidam qual tipo de Player instanciar.
     protected Player createPlayer(String player) {
         return new Player(player);
     }
@@ -128,6 +137,11 @@ public abstract class AbstractBoard extends JPanel {
         doDrawing(g);
     }
 
+    // --- TEMPLATE METHOD: doDrawing ---
+    // Define o algoritmo para desenhar cada quadro do jogo.
+    // A ordem das chamadas é fixa, mas o comportamento de
+    // drawBadSprites, drawPlayers e drawOtherSprites pode ser
+    // customizado pelas subclasses.
     public void doDrawing(Graphics g1) { // Template Method
         Graphics2D g = (Graphics2D) g1;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -184,6 +198,9 @@ public abstract class AbstractBoard extends JPanel {
         repaint();
     }
 
+    // --- TEMPLATE METHOD: doGameCycle ---
+    // Define o ciclo de vida principal do jogo (game loop).
+    // A cada "tick" do timer, o jogo atualiza seu estado e se redesenha.
     public class GameCycle implements ActionListener {
 
         @Override
@@ -192,6 +209,7 @@ public abstract class AbstractBoard extends JPanel {
         }
     }
 
+    // Classe interna para lidar com a entrada do teclado.
     public class TAdapter extends KeyAdapter {
 
         @Override

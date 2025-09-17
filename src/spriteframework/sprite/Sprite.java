@@ -18,6 +18,11 @@ public class Sprite {
     protected int dx;
     protected int dy;
     protected int monsterDirection = 0;
+
+    // --- CONTEXTO DO STRATEGY PATTERN ---
+    // A referência para a estratégia de movimento.
+    // O Sprite (contexto) não sabe como o movimento é implementado,
+    // ele apenas delega a execução para o objeto strategy.
     protected IMovementStrategy movementStrategy;
 
     public Sprite() {
@@ -25,10 +30,16 @@ public class Sprite {
         visible = true;
     }
 
+    // --- INJEÇÃO DA ESTRATÉGIA ---
+    // Este método permite que a estratégia de movimento seja configurada em tempo de execução.
+    // Isso desacopla o Sprite do algoritmo de movimento específico.
     public void setMovementStrategy(IMovementStrategy movementStrategy) {
         this.movementStrategy = movementStrategy;
     }
 
+    // --- DELEGAÇÃO PARA A ESTRATÉGIA ---
+    // O método performMove() delega a lógica de movimento para o objeto
+    // da estratégia, se uma tiver sido definida.
     public void performMove() {
         if (movementStrategy != null) {
             movementStrategy.move(this);

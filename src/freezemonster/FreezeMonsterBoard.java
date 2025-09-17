@@ -29,13 +29,19 @@ public class FreezeMonsterBoard extends AbstractBoard {
     private int lastPlayerDy = -2; // Default to firing "up" if player hasn't moved yet
 
 
+    // --- CONCRETE CLASS PARA O TEMPLATE METHOD ---
+    // FreezeMonsterBoard estende AbstractBoard e implementa os métodos abstratos
+    // (hotspots) para definir a lógica específica do jogo Freeze Monster.
     public FreezeMonsterBoard(String image) {
         super(image);
     }
 
+
     /**
-     * FACTORY METHOD (Player):
-     * This method now injects the correct movement strategy into the player object.
+     * --- IMPLEMENTAÇÃO DO FACTORY METHOD ---
+     * Sobrescreve createPlayer para instanciar um PlayerBilateral e injetar
+     * a estratégia de movimento correta (PlayerBilateralStrategy), que permite
+     * movimento em 8 direções.
      */
     @Override
     protected Player createPlayer(String player) {
@@ -44,6 +50,10 @@ public class FreezeMonsterBoard extends AbstractBoard {
         return p;
     }
 
+
+    // --- IMPLEMENTAÇÃO DO HOTSPOT: createBadSprites ---
+    // Cria os monstros do jogo, cada um com sua própria estratégia
+    // de movimento aleatório em 8 direções.
     protected void createBadSprites() {
         for (int i = 0; i < Commons.NUMBER_OF_MONSTERS_TO_DESTROY; i++) {
 
@@ -89,6 +99,9 @@ public class FreezeMonsterBoard extends AbstractBoard {
         }
     }
 
+    // --- IMPLEMENTAÇÃO DO HOTSPOT: update ---
+    // Contém a lógica principal do jogo: verifica colisões,
+    // atualiza posições dos sprites e o estado do jogo.
     protected void update() {
         if (deaths == Commons.NUMBER_OF_MONSTERS_TO_DESTROY) {
             inGame = false;
@@ -169,7 +182,7 @@ public class FreezeMonsterBoard extends AbstractBoard {
                 goop.setDirection(new Random().nextInt(8) + 1);
             }
 
-            if (shot == Commons.CHANCE && monster.isVisible() && goop.isDestroyed()) {
+            if (shot == Commons.CHANCE && !monster.isDying() && goop.isDestroyed()) {
 
                 goop.setDestroyed(false);
                 goop.setX(monster.getX());

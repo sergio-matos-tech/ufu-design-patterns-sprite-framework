@@ -43,6 +43,6 @@ public class PlayerBilateral extends Player{
             dy = 0;
 
         if (key == KeyEvent.VK_DOWN)
-            dy = -0;
+            dy = 0;
     }
 }
